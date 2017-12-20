@@ -1,3 +1,42 @@
+import axios from 'axios';
+import cosmicConfig from '../../config/cosmic';
+import FormData from 'form-data';
+import { Actions } from 'react-native-router-flux';
+import { clear } from './posts';
+
+// Constants
+const CREATE_USER = 'CREATE_USER';
+const LOGIN = 'LOGIN';
+const LOGOUT = 'LOGOUT';
+
+// Action Creators
+const createUser = user => ({ type: CREATE_USER, user });
+const login = user => ({ type: LOGIN, user });
+const logout = () => ({ type: LOGOUT });
+
+// Reducer
+export default (user = {}, action) => {
+  switch (action.type) {
+    case CREATE_USER:
+      return action.user;
+    case LOGIN:
+      return action.user;
+    case LOGOUT:
+      return {};
+    default:
+      return user;
+  }
+}
+
+// Helper Function
+const formatUser = data => ({
+  name: data.object.metadata.name,
+  username: data.object.metadata.username,
+  profilePicture: data.object.metadata.profile_picture,
+  id: data.object._id,
+  slug: data.object.slug,
+})
+
 export const addUser = user => dispatch => {
   let data = new FormData();
   data.append('media', {
@@ -77,4 +116,10 @@ export const authenticate = user => dispatch => {
       }
     })
     .catch(error => console.error('Login unsuccessful', error))
+}
+
+export const logoutUser = () => dispatch => {
+  dispatch(logout());
+  dispatch(clear());
+  Actions.welcome();
 }
